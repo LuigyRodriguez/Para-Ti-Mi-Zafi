@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a0f1f">
+<title>Para ti ❤️</title>
+<style>
+  :root {
+    --noche:  #1a0f1f;   /* ciruela muy oscura */
+    --noche2: #2b1428;   /* ciruela cálida */
+    --brasa:  #e8924a;   /* ámbar de octubre */
+    --vela:   #f6dcb0;   /* luz de vela (texto) */
+    --rosa:   #ff6f91;   /* corazones */
+    --serif: "Palatino Linotype", Palatino, "Iowan Old Style", Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: var(--serif);
+    color: var(--vela);
+    background: radial-gradient(ellipse at 50% 110%, #5a2a2e 0%, var(--noche2) 45%, var(--noche) 100%);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ---------- Fondo: estrellas y corazones ---------- */
+  #cielo, #corazones { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  #cielo { z-index: 0; opacity: 0; transition: opacity 3s ease; }
+  #corazones { z-index: 1; }
+  body.abierto #cielo { opacity: 1; }
+
+  .estrella {
+    position: absolute; border-radius: 50%; background: var(--vela);
+    animation: brillo var(--d, 4s) ease-in-out infinite alternate;
+  }
+  @keyframes brillo { from { opacity: .1; } to { opacity: .85; } }
+
+  .corazon {
+    position: absolute; bottom: -10vh; line-height: 1; will-change: transform, opacity;
+    animation: subir var(--dur, 12s) ease-in forwards;
+  }
+  @keyframes subir {
+    0%   { transform: translate(0, 0) scale(.8); opacity: 0; }
+    15%  { opacity: var(--op, .5); }
+    80%  { opacity: var(--op, .5); }
+    100% { transform: translate(var(--x, 20px), -115vh) scale(1.1); opacity: 0; }
+  }
+
+  /* ---------- Pantalla de bienvenida ---------- */
+  #bienvenida {
+    position: fixed; inset: 0; z-index: 3;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1.6rem; padding: 2rem; text-align: center;
+    transition: opacity 1.4s ease, transform 1.4s ease, visibility 1.4s;
+  }
+  body.abierto #bienvenida { opacity: 0; transform: scale(1.06); visibility: hidden; }
+
+  .luna { font-size: clamp(3.5rem, 18vw, 5.5rem); filter: drop-shadow(0 0 22px rgba(246,220,176,.45)); animation: flota 5s ease-in-out infinite alternate; }
+  @keyframes flota { from { transform: translateY(-6px); } to { transform: translateY(6px); } }
+
+  #bienvenida h1 { font-weight: 400; font-style: italic; font-size: clamp(1.7rem, 7.5vw, 2.6rem); letter-spacing: .01em; }
+
+  #abrir {
+    font: inherit; font-size: clamp(1.1rem, 4.6vw, 1.35rem); color: var(--noche);
+    background: linear-gradient(180deg, #ffc78a, var(--brasa));
+    border: 0; border-radius: 999px; min-height: 3.6rem; padding: 1rem 2.2rem;
+    box-shadow: 0 0 28px rgba(232,146,74,.45), 0 6px 18px rgba(0,0,0,.35);
+    cursor: pointer; touch-action: manipulation;
+    animation: late 2.6s ease-in-out infinite;
+  }
+  #abrir:active { transform: scale(.96); }
+  @keyframes late { 0%,100% { box-shadow: 0 0 22px rgba(232,146,74,.35), 0 6px 18px rgba(0,0,0,.35); } 50% { box-shadow: 0 0 40px rgba(232,146,74,.7), 0 6px 18px rgba(0,0,0,.35); } }
+
+  #aviso { min-height: 1.3em; font-size: .95rem; opacity: 0; transition: opacity .6s; color: var(--brasa); }
+  #aviso.ver { opacity: .9; }
+
+  /* ---------- Carta (mensaje) ---------- */
+  #carta {
+    position: relative; z-index: 2; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: clamp(1.1rem, 4.5vh, 2rem); padding: 2rem 1.5rem; text-align: center;
+  }
+  .frase {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 2.2s ease, transform 2.2s ease;
+    font-size: clamp(1.3rem, 6vw, 2rem); line-height: 1.35; font-weight: 400;
+    text-shadow: 0 0 18px rgba(246,220,176,.25);
+    max-width: 22em; overflow-wrap: break-word;
+  }
+  .frase.ver { opacity: 1; transform: none; }
+
+  /* La frase más importante: más grande, ámbar y con brillo */
+  .frase.clave {
+    font-style: italic; color: #ffd2a1; line-height: 1.15;
+    font-size: clamp(2.1rem, 11vw, 3.6rem);
+    transform: translateY(10px) scale(.92);
+    transition: opacity 3s ease, transform 3s cubic-bezier(.2,.8,.2,1);
+    text-shadow: 0 0 26px rgba(232,146,74,.7), 0 0 60px rgba(255,111,145,.35);
+  }
+  .frase.clave.ver { transform: none; }
+  .frase.clave span { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .luna, #abrir, .estrella { animation: none; }
+    .frase, .frase.clave { transition-duration: .6s; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+  <div id="cielo"></div>
+  <div id="corazones"></div>
+
+  <!-- Pantalla inicial -->
+  <main id="bienvenida">
+    <div class="luna">🌙</div>
+    <h1>Tengo algo para ti...</h1>
+    <button id="abrir" type="button">Abre mi sorpresa ❤️</button>
+    <p id="aviso" aria-live="polite"></p>
+  </main>
+
+  <!-- Mensaje -->
+  <section id="carta" aria-live="polite">
+    <p class="frase">Hoy es primero de Octubre...</p>
+    <p class="frase">Y Tú siempre serás...</p>
+    <p class="frase clave"><span>My girl,</span><span>my girl,</span><span>my girl</span></p>
+    <p class="frase">Te amo mi niña ❤️</p>
+    <p class="frase">Feliz inicio de mes,<br>otro mes más a tu lado. &lt;3</p>
+  </section>
+
+  <!-- Debe estar junto a index.html. Sin controles, sin loop (suena una sola vez). -->
+  <audio id="audio" src="audio.mp3" preload="auto" playsinline></audio>
+
+<script>
+(() => {
+  const audio    = document.getElementById('audio');
+  const boton    = document.getElementById('abrir');
+  const aviso    = document.getElementById('aviso');
+  const cielo    = document.getElementById('cielo');
+  const corazones= document.getElementById('corazones');
+  const frases   = document.querySelectorAll('.frase');
+
+  // Segundos (desde el toque) en que aparece cada frase. Ajusta a tu canción.
+  const TIEMPOS = [2.5, 6.5, 10.5, 16, 20];
+
+  const rand = (min, max) => Math.random() * (max - min) + min;
+  let iniciado = false;
+
+  /* Estrellas: se crean al cargar, se ven al abrir */
+  for (let i = 0; i < 55; i++) {
+    const e = document.createElement('div');
+    const t = rand(1, 2.6);
+    e.className = 'estrella';
+    e.style.cssText = `left:${rand(0,100)}%;top:${rand(0,100)}%;width:${t}px;height:${t}px;--d:${rand(3,7)}s;animation-delay:${rand(0,5)}s`;
+    cielo.appendChild(e);
+  }
+
+  /* Un corazón flotante; se elimina solo al terminar su animación */
+  function lanzarCorazon() {
+    const c = document.createElement('div');
+    c.className = 'corazon';
+    c.textContent = Math.random() < .8 ? '❤️' : '🤍';
+    c.style.cssText = `left:${rand(2,96)}%;font-size:${rand(.8,1.8)}rem;--op:${rand(.2,.6)};--dur:${rand(10,17)}s;--x:${rand(-40,40)}px`;
+    c.addEventListener('animationend', () => c.remove());
+    corazones.appendChild(c);
+  }
+
+  function comenzarExperiencia() {
+    if (iniciado) return;
+    iniciado = true;
+    document.body.classList.add('abierto');
+    TIEMPOS.forEach((s, i) => setTimeout(() => frases[i].classList.add('ver'), s * 1000));
+    setTimeout(() => {                      // corazones lentos y constantes (siguen al terminar el audio)
+      lanzarCorazon();
+      setInterval(lanzarCorazon, 1600);
+    }, 1200);
+  }
+
+  function pedirOtroToque() {
+    aviso.textContent = 'Toca de nuevo para iniciar la sorpresa 💛';
+    aviso.classList.add('ver');
+  }
+
+  /* El play() ocurre DENTRO del manejador del toque: así el navegador lo permite */
+  boton.addEventListener('click', () => {
+    if (iniciado) return;
+    audio.loop = false;
+    audio.currentTime = 0;
+    const intento = audio.play();
+
+    if (intento && typeof intento.then === 'function') {
+      intento.then(comenzarExperiencia).catch(err => {
+        if (err && err.name === 'NotAllowedError') pedirOtroToque();
+        else comenzarExperiencia();         // p. ej. falta audio.mp3: la sorpresa visual igual se muestra
+      });
+    } else {
+      comenzarExperiencia();                // navegadores antiguos sin promesa
+    }
+  });
+})();
+</script>
+</body>
+</html>
